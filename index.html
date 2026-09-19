@@ -1,0 +1,1047 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="color-scheme" content="light">
+<title>Vocab Practice</title>
+<style>
+:root{--bg:#f4f4f4;--card:#fff;--ink:#4a4a55;--strong:#25252e;--mute:#8a8a96;--line:#e2e2e8;--green:#4b8a3c;--red:#e5484d;--purple:#4a2c5a;--accent:#4a2c5a}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 "Karla",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+main{max-width:560px;margin:0 auto;padding:28px 16px 64px}
+h1{font-size:1.6rem;font-weight:500;color:var(--strong);margin:0 0 4px}
+h2{font-size:1rem;font-weight:600;color:var(--strong);margin:26px 0 8px}
+.sub{color:var(--mute);margin:0 0 20px}
+.card{background:var(--card);border-radius:8px;padding:20px 24px;box-shadow:0 1px 2px rgba(0,0,0,.06)}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+button{font:inherit;cursor:pointer;border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:99px;padding:8px 18px}
+button:hover:not(:disabled){border-color:var(--green)}
+button:disabled{opacity:.45;cursor:default}
+button.primary{background:var(--purple);color:#fff;border-color:var(--purple);font-weight:600}
+button.link{border:0;background:none;color:var(--purple);padding:4px 8px;text-decoration:underline}
+input[type=text],textarea{font:inherit;width:100%;padding:9px 12px;border:1px solid var(--line);border-radius:8px;background:#fff;color:var(--strong)}
+input:focus,textarea:focus,button:focus-visible{outline:2px solid var(--purple);outline-offset:1px}
+textarea{min-height:110px;resize:vertical}
+.rows{display:grid;grid-template-columns:1fr 1fr auto;gap:8px;align-items:center}
+.rows .h{font-size:.78rem;color:var(--mute);text-transform:uppercase;letter-spacing:.05em}
+.rows button{padding:6px 10px;border-radius:8px}
+table{width:100%;border-collapse:collapse}
+td{padding:8px 6px;border-top:1px solid var(--line);vertical-align:top}
+tr:first-child td{border-top:0}
+label.chk{display:flex;gap:8px;align-items:center;color:var(--mute);font-size:.95rem}
+.msg{min-height:1.4em;font-size:.95rem;margin-top:12px}
+.msg.bad{color:var(--red)}.msg.good{color:var(--green)}.msg.warn{color:#a8720f}
+
+/* study card */
+.top{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;font-size:.85rem;color:var(--mute)}
+.bar{height:4px;background:#e3e3e8;border-radius:9px;overflow:hidden;margin-bottom:14px}
+.bar i{display:block;height:100%;background:var(--green);transition:width .25s}
+.dots{display:flex;gap:2px;margin-bottom:14px}
+.dots i{width:5px;height:5px;border-radius:50%;background:#dcdce2}
+.dots i.on{background:var(--green)}
+.prompt-row{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
+.prompt{font-size:2rem;font-weight:400;color:var(--ink);line-height:1.2;margin:0;word-break:break-word}
+.spk{flex:none;width:28px;height:28px;padding:0;border-radius:50%;background:#f0f0f3;border:0;color:#666;display:grid;place-items:center}
+.spk svg{width:14px;height:14px}
+.pos{display:flex;align-items:center;gap:8px;margin:12px 0 16px;font-size:.78rem;color:var(--mute);font-weight:600}
+.gi{width:22px;height:22px;border-radius:50%;display:grid;place-items:center}
+.gi svg{width:13px;height:13px}
+.gi.f{background:#fde4f1;color:#e05aa3}.gi.m{background:#dff0fb;color:#2c8fd4}.gi.n{background:#eee;color:#888}
+.opts{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.opt{display:flex;align-items:center;justify-content:center;gap:8px;padding:8px 10px;min-height:38px;font-size:.92rem;border-radius:99px;text-align:center}
+.opt.good{border:1.5px solid var(--green);color:var(--green)}
+.opt.bad{border:1.5px solid var(--red);color:var(--red)}
+.answer{width:100%;padding:12px 14px;font-size:1.1rem;border:2px solid var(--line);border-radius:8px;background:#fff;color:var(--strong)}
+.answer.good{border-color:var(--green);color:var(--green)}
+.answer.bad{border-color:var(--red);color:var(--red)}
+.bigspk{width:76px;height:76px;padding:0;border-radius:50%;background:var(--purple);border:0;color:#fff;display:grid;place-items:center;margin:0 auto 18px}
+.bigspk:hover:not(:disabled){filter:brightness(1.15)}
+.bigspk svg{width:32px;height:32px}
+.right-ans{margin-top:10px;font-size:.95rem;color:var(--green)}
+.center{text-align:center}
+.flash{min-height:260px;display:flex;align-items:center;justify-content:center;text-align:center;font-size:2rem;cursor:pointer;user-select:none;padding:24px}
+.flash small{display:block;font-size:.75rem;color:var(--mute);margin-bottom:8px;text-transform:uppercase;letter-spacing:.06em}
+h2.prompt.long{font-size:1.2rem;line-height:1.4}
+.prompt-row{margin-bottom:16px}
+.answer{margin-top:16px}
+.opts.wide{grid-template-columns:1fr}
+.opts.wide .opt{border-radius:14px;text-align:left;justify-content:flex-start;padding:10px 14px}
+@media(max-width:420px){.opts{grid-template-columns:1fr}.prompt{font-size:1.6rem}}
+
+/* tabs */
+#nav{background:#fff;border-bottom:1px solid var(--line);position:sticky;top:0;z-index:5}
+#nav div{max-width:560px;margin:0 auto;display:flex;gap:4px;padding:0 16px}
+#nav a{padding:13px 14px 11px;color:var(--mute);text-decoration:none;border-bottom:2px solid transparent;font-weight:600}
+#nav a.on{color:var(--purple);border-color:var(--purple)}
+#nav a:focus-visible{outline:2px solid var(--purple);outline-offset:-2px}
+/* quotes */
+.seg{display:flex;gap:6px}
+.seg button{padding:6px 14px}
+.seg button.on{background:var(--purple);color:#fff;border-color:var(--purple)}
+.qh{font-size:.8rem;text-transform:uppercase;letter-spacing:.06em;color:var(--mute);font-weight:600;margin:26px 0 8px}
+.q{margin:0 0 10px}
+.q blockquote{margin:0;font-size:1.05rem;line-height:1.6;color:var(--strong);white-space:pre-line}
+.q cite{display:block;margin-top:8px;font-size:.85rem;font-style:normal;color:var(--mute)}
+
+/* frq practice */
+.chips{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:6px}
+.chips button{padding:6px 14px}
+.chips button.on{background:var(--purple);color:#fff;border-color:var(--purple)}
+button.pick{display:block;width:100%;text-align:left;border:0;border-radius:8px;padding:14px 18px;margin-bottom:8px;background:var(--card);box-shadow:0 1px 2px rgba(0,0,0,.06)}
+button.pick:hover{box-shadow:0 0 0 1.5px var(--purple)}
+button.pick .meta{display:flex;gap:8px;align-items:center;font-size:.8rem;color:var(--mute);margin-bottom:2px}
+button.pick .ttl{color:var(--strong)}
+.badge{font-size:.72rem;font-weight:600;padding:1px 8px;border-radius:99px;background:#efe9f3;color:var(--purple)}
+.clock{font-size:2.6rem;line-height:1.1;font-weight:600;font-variant-numeric:tabular-nums;color:var(--strong)}
+.clock.low{color:var(--red)}
+.frqhead{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:8px;gap:12px}
+.wc{color:var(--mute);font-size:.9rem}
+.essay{width:100%;min-height:360px;resize:vertical;font:inherit;line-height:1.6;padding:12px 14px;border:1px solid var(--line);border-radius:8px;background:#fff;color:var(--strong)}
+.essay:disabled{background:#f4f4f6;color:var(--mute)}
+details.pbox{margin:0 0 12px}
+details.pbox summary{cursor:pointer;color:var(--purple);font-weight:600;padding:4px 0}
+.pasted{white-space:pre-wrap;background:#f7f7f9;border-radius:8px;padding:10px 12px;margin:8px 0;max-height:240px;overflow:auto;font-size:.95rem}
+.essaybox{white-space:pre-wrap;line-height:1.65;color:var(--strong)}
+.rr{display:flex;gap:10px;align-items:flex-start;padding:9px 12px;border:1px solid var(--line);border-radius:8px;margin-bottom:6px;cursor:pointer;font-size:.95rem}
+.rr:has(input:checked){border-color:var(--purple);background:#f7f3f9}
+.rr input{margin-top:4px;accent-color:var(--purple)}
+.rr b{color:var(--strong);min-width:1.2em}
+.rowh{display:flex;justify-content:space-between;align-items:baseline;margin:20px 0 8px}
+.rowh h3{margin:0;font-size:1rem;color:var(--strong)}
+.total{font-size:1.4rem;font-weight:600;color:var(--strong)}
+ol.steps{padding-left:20px;margin:6px 0 14px;color:var(--ink)}
+ol.steps li{margin-bottom:4px}
+</style>
+</head>
+<body>
+<nav id="nav" aria-label="Sections"><div><a href="#" data-tab="vocab">Vocab</a><a href="#quotes" data-tab="quotes">Quotes</a><a href="#frq" data-tab="frq">FRQ Practice</a></div></nav>
+<main id="app"></main>
+<script>
+"use strict";
+// ---------- helpers ----------
+const app = document.getElementById('app');
+const esc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const shuffle = a => { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+const store = {
+  get(k, d) { try { const v = localStorage.getItem(k); return v == null ? d : JSON.parse(v); } catch { return d; } },
+  set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch {} }
+};
+const ICON = {
+  spk: '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M3 9v6h4l5 4V5L7 9H3zm13.5 3a4.5 4.5 0 0 0-2.5-4v8a4.5 4.5 0 0 0 2.5-4zM14 3.2v2.1a7 7 0 0 1 0 13.4v2.1a9 9 0 0 0 0-17.6z"/></svg>',
+  one: '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="12" cy="6" r="3.2"/><path d="M8.5 21v-7.5a3.5 3.5 0 0 1 7 0V21z"/></svg>',
+  two: '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="7" cy="7" r="2.6"/><path d="M4 21v-6.5a3 3 0 0 1 6 0V21z"/><circle cx="17" cy="7" r="2.6"/><path d="M14 21v-6.5a3 3 0 0 1 6 0V21z"/></svg>'
+};
+
+// ---------- URL <-> deck ----------
+const b64u = {
+  enc(bytes) { let s = ''; bytes.forEach(b => s += String.fromCharCode(b)); return btoa(s).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, ''); },
+  dec(str) { str = str.replace(/-/g, '+').replace(/_/g, '/'); while (str.length % 4) str += '='; return Uint8Array.from(atob(str), c => c.charCodeAt(0)); }
+};
+const pipe = async (bytes, stream) => new Uint8Array(await new Response(new Blob([bytes]).stream().pipeThrough(stream)).arrayBuffer());
+async function encodeDeck(deck) {
+  const raw = new TextEncoder().encode(JSON.stringify([deck.title, deck.cards.map(c => [c.t, c.d])]));
+  const plain = 'p' + b64u.enc(raw);
+  if (typeof CompressionStream === 'undefined') return plain;
+  const z = 'z' + b64u.enc(await pipe(raw, new CompressionStream('deflate-raw')));
+  return z.length < plain.length ? z : plain;
+}
+async function decodeDeck(h) {
+  let bytes = b64u.dec(h.slice(1));
+  if (h[0] === 'z') bytes = await pipe(bytes, new DecompressionStream('deflate-raw'));
+  else if (h[0] !== 'p') throw new Error('bad format');
+  const [title, cards] = JSON.parse(new TextDecoder().decode(bytes));
+  if (!Array.isArray(cards) || !cards.length) throw new Error('empty');
+  return { title: String(title || 'Untitled list'), cards: cards.map(([t, d]) => ({ t: String(t), d: String(d) })) };
+}
+
+// ---------- routing ----------
+let deck = null, keyHandler = null, S = null, lastDeckHash = '', frqTick = null;   // S = in-memory study session for the open list
+document.addEventListener('keydown', e => keyHandler && keyHandler(e));
+window.addEventListener('hashchange', route);
+async function route() {
+  keyHandler = null; speechCancel();
+  const h = location.hash.slice(1);
+  document.querySelectorAll('#nav a').forEach(a => a.classList.toggle('on', a.dataset.tab === (h === 'quotes' ? 'quotes' : h === 'frq' ? 'frq' : 'vocab')));
+  clearInterval(frqTick);
+  if (h === 'quotes') return renderQuotes();
+  if (h === 'frq') return renderFrq();
+  if (!h) { document.title = 'Vocab Practice'; return renderLibrary(); }
+  try { deck = await decodeDeck(h); } catch { return renderBroken(); }
+  lastDeckHash = h;
+  document.title = deck.title;
+  renderOverview();
+}
+async function goToDeck(d) {
+  const h = await encodeDeck(d);
+  if (location.hash.slice(1) === h) route(); else location.hash = h;
+}
+
+function renderBroken() {
+  app.innerHTML = `<h1>That link doesn't open</h1><p class="sub">The vocab list in this URL is damaged or was cut off when it was copied.</p><button class="primary" id="n">Make a new list</button>`;
+  document.getElementById('n').onclick = () => { history.pushState(null, '', location.pathname); route(); };
+}
+
+// ---------- editor ----------
+function renderEditor(d) {
+  const isEdit = !!location.hash.slice(1);
+  app.innerHTML = `
+    <h1>${isEdit ? 'Edit list' : 'Create a vocab list'}</h1>
+    <p class="sub">Your list is stored in the page address. Share the link and anyone who opens it gets the same list.</p>
+    <div class="card">
+      <input type="text" id="title" placeholder="List title" value="${esc(d.title)}" maxlength="100">
+      <h2>Words</h2>
+      <div class="rows" id="rows"><span class="h">Word</span><span class="h">Definition</span><span></span></div>
+      <div class="row" style="margin-top:12px"><button id="add">+ Add row</button></div>
+      <p class="sub" style="margin:14px 0 0;font-size:.9rem">Tip: if a word has more than one accepted spelling, separate them with “/”, e.g. <code>color / colour</code>. Text in (brackets) is optional when typing.</p>
+    </div>
+    <p id="len" class="sub" style="margin-top:10px"></p>
+    <div class="row"><button class="primary" id="save">Save &amp; study</button><button id="cancel">Cancel</button></div>
+    <p id="err" class="msg bad"></p>`;
+  const rows = document.getElementById('rows');
+  const addRow = (t = '', dd = '') => {
+    const a = document.createElement('input'), b = document.createElement('input'), x = document.createElement('button');
+    a.type = b.type = 'text'; a.value = t; b.value = dd; a.placeholder = 'Word'; b.placeholder = 'Definition';
+    a.setAttribute('aria-label', 'Word'); b.setAttribute('aria-label', 'Definition');
+    x.textContent = '✕'; x.title = 'Remove row'; x.setAttribute('aria-label', 'Remove row');
+    x.onclick = () => { a.remove(); b.remove(); x.remove(); updLen(); };
+    b.onkeydown = e => { if (e.key === 'Enter') { e.preventDefault(); addRow(); rows.lastElementChild.previousElementSibling.previousElementSibling.focus(); } };
+    rows.append(a, b, x);
+  };
+  d.cards.forEach(c => addRow(c.t, c.d));
+  const read = () => {
+    const ins = [...rows.querySelectorAll('input')], cards = [];
+    for (let i = 0; i < ins.length; i += 2) { const t = ins[i].value.trim(), dd = ins[i + 1].value.trim(); if (t && dd) cards.push({ t, d: dd }); }
+    return { title: document.getElementById('title').value.trim() || 'Untitled list', cards };
+  };
+  async function updLen() { const cur = read(); const el = document.getElementById('len'); if (!cur.cards.length) return el.textContent = ''; const n = (await encodeDeck(cur)).length; el.textContent = `Link length: about ${n.toLocaleString()} characters` + (n > 8000 ? ' — very long, some apps may cut it off.' : '.'); }
+  app.addEventListener('input', updLen); updLen();
+  document.getElementById('add').onclick = () => { addRow(); rows.lastElementChild.previousElementSibling.previousElementSibling.focus(); };
+  document.getElementById('save').onclick = () => {
+    const cur = read();
+    if (cur.cards.length < 2) return document.getElementById('err').textContent = 'Add at least two rows that have both a word and a definition.';
+    goToDeck(cur);
+  };
+  document.getElementById('cancel').onclick = () => route();
+}
+
+// ---------- overview ----------
+function renderOverview() {
+  keyHandler = null;
+  const inProgress = S && S.key === location.hash && S.items.some(x => x.phase > 0 || x.seen) && S.items.some(x => x.phase < 4);
+  const doneWords = S && S.key === location.hash ? S.items.filter(x => x.phase >= 4).length : 0;
+  app.innerHTML = `
+    <h1>${esc(deck.title)}</h1>
+    <p class="sub">${deck.cards.length} words</p>
+    <div class="card">
+      <div class="row">
+        <button id="learn">${inProgress ? `Continue (${doneWords}/${deck.cards.length} learned)` : 'Learn'}</button>
+        ${inProgress ? '<button id="restart">Restart</button>' : ''}
+        <button id="flash">Flashcards</button><button id="edit">Edit list</button><button id="copy">Copy link</button>
+      </div>
+    </div>
+    <h2>Words</h2>
+    <div class="card"><table>${deck.cards.map(c => `<tr><td>${esc(c.t)}</td><td>${esc(c.d)}</td></tr>`).join('')}</table></div>
+    <p class="sub" style="margin-top:16px"><button class="link" id="new">← All lists</button></p>`;
+  document.getElementById('learn').onclick = () => startLearn(false);
+  if (inProgress) document.getElementById('restart').onclick = () => startLearn(true);
+  document.getElementById('flash').onclick = startFlash;
+  document.getElementById('edit').onclick = () => renderEditor(deck);
+  document.getElementById('copy').onclick = async e => {
+    try { await navigator.clipboard.writeText(location.href); e.target.textContent = 'Copied!'; setTimeout(() => e.target.textContent = 'Copy link', 1500); }
+    catch { prompt('Copy this link:', location.href); }
+  };
+  document.getElementById('new').onclick = () => { history.pushState(null, '', location.pathname); route(); };
+}
+
+// ---------- typed-answer checking ----------
+const stripAcc = s => s.normalize('NFD').replace(/[̀-ͯ]/g, '');
+const norm = s => s.toLowerCase().replace(/[¡¿!?.,]/g, '').replace(/\s+/g, ' ').trim();
+function accepted(ans) {
+  const out = [];
+  ans.split(/\s*[\/;]\s*/).forEach(a => { out.push(norm(a)); const w = norm(a.replace(/\([^)]*\)/g, '')); if (w) out.push(w); });
+  return out;
+}
+function lev(a, b) { const d = Array.from({ length: a.length + 1 }, (_, i) => [i]); for (let j = 1; j <= b.length; j++) d[0][j] = j; for (let i = 1; i <= a.length; i++) for (let j = 1; j <= b.length; j++) d[i][j] = Math.min(d[i - 1][j] + 1, d[i][j - 1] + 1, d[i - 1][j - 1] + (a[i - 1] === b[j - 1] ? 0 : 1)); return d[a.length][b.length]; }
+function check(input, ans) {
+  const x = norm(input); if (!x) return 'wrong';
+  const acc = accepted(ans);
+  if (acc.includes(x)) return 'right';
+  if (acc.some(a => stripAcc(a) === stripAcc(x))) return 'right-accent';
+  if (acc.some(a => a.length > 4 && lev(stripAcc(a), stripAcc(x)) === 1)) return 'close';
+  return 'wrong';
+}
+
+// ---------- speech ----------
+const canSpeak = () => 'speechSynthesis' in window && typeof SpeechSynthesisUtterance !== 'undefined';
+function speechCancel() { if (canSpeak()) speechSynthesis.cancel(); }
+function speak(text) {
+  if (!canSpeak()) return;
+  speechSynthesis.cancel();
+  const u = new SpeechSynthesisUtterance(text.replace(/\([^)]*\)/g, '').split(/[\/;]/)[0].trim());
+  u.lang = 'en-US'; u.rate = .9;
+  const v = speechSynthesis.getVoices().find(v => /^en/i.test(v.lang)); if (v) u.voice = v;
+  speechSynthesis.speak(u);
+}
+
+// ---------- learn ----------
+// Every word must pass four phases in a row:
+//   0 word -> pick definition   1 definition -> pick word   2 definition -> type word   3 hear word -> type it
+// A wrong answer sends that word back to phase 0. Finished when all words reach phase 4.
+const WORKING_SET = 5;
+function startLearn(fresh) {
+  if (fresh || !S || S.key !== location.hash) S = { key: location.hash, items: deck.cards.map(c => ({ c, phase: 0, seen: false })), last: null, mistakes: 0 };
+  nextQ();
+}
+function pickNext() {
+  const open = S.items.filter(x => x.phase < 4);
+  if (!open.length) return null;
+  const work = [...open.filter(x => x.seen), ...open.filter(x => !x.seen)].slice(0, WORKING_SET);
+  const pool = work.length > 1 ? work.filter(x => x !== S.last) : work;
+  return pool[Math.floor(Math.random() * pool.length)];
+}
+function header() {
+  const total = S.items.length * 4, done = S.items.reduce((n, x) => n + x.phase, 0);
+  return `<div class="top"><button class="link" id="quit" style="padding:0">← Exit</button><span>${S.items.filter(x => x.phase >= 4).length} / ${S.items.length} learned</span></div>
+    <div class="bar"><i style="width:${done / total * 100}%"></i></div>`;
+}
+function nextQ() {
+  keyHandler = null; speechCancel();
+  const x = pickNext();
+  if (!x) return renderDone();
+  S.last = x; x.seen = true;
+  const phase = x.phase === 3 && !canSpeak() ? 2 : x.phase, c = x.c;
+  const dots = `<div class="dots" aria-label="Phase ${phase + 1} of 4">${[0, 1, 2, 3].map(i => `<i class="${i < x.phase ? 'on' : ''}"></i>`).join('')}</div>`;
+  const bindQuit = () => { document.getElementById('quit').onclick = renderOverview; };
+  const settle = ok => {
+    if (ok) x.phase++; else { x.phase = 0; S.mistakes++; }
+    document.querySelector('.dots').innerHTML = [0, 1, 2, 3].map(i => `<i class="${i < x.phase ? 'on' : ''}"></i>`).join('');
+    document.querySelector('.bar i').style.width = S.items.reduce((n, y) => n + y.phase, 0) / (S.items.length * 4) * 100 + '%';
+  };
+
+  if (phase <= 1) {                       // multiple choice
+    const from = phase === 0 ? 't' : 'd', to = phase === 0 ? 'd' : 't';
+    const others = [...new Set(deck.cards.filter(o => o !== c && norm(o[to]) !== norm(c[to])).map(o => o[to]))];
+    const opts = shuffle([c[to], ...shuffle(others).slice(0, 3)]);
+    const spk = phase === 0 && canSpeak() ? `<button class="spk" id="spk" aria-label="Play audio">${ICON.spk}</button>` : '';
+    app.innerHTML = `${header()}<div class="card">${dots}<div class="prompt-row"><h2 class="prompt${c[from].length > 40 ? ' long' : ''}" style="margin:0;font-weight:400">${esc(c[from])}</h2>${spk}</div>
+      <div class="opts${opts.some(o => o.length > 32) ? ' wide' : ''}">${opts.map((o, i) => `<button class="opt" data-i="${i}">${esc(o)}</button>`).join('')}</div>
+      <div class="msg" id="msg"></div><div class="row" style="justify-content:center"><button class="primary" id="cont" hidden>Continue</button></div></div>`;
+    bindQuit();
+    if (spk) document.getElementById('spk').onclick = () => speak(c.t);
+    let locked = false;
+    const btns = [...app.querySelectorAll('.opt')];
+    const pick = i => {
+      if (locked) return; locked = true;
+      const ok = norm(opts[i]) === norm(c[to]);
+      btns[i].classList.add(ok ? 'good' : 'bad'); btns[i].innerHTML = (ok ? '✓ ' : '✕ ') + btns[i].innerHTML;
+      settle(ok);
+      if (ok) { keyHandler = null; setTimeout(nextQ, 650); return; }
+      btns.forEach((b, j) => { if (norm(opts[j]) === norm(c[to])) { b.classList.add('good'); b.innerHTML = '✓ ' + b.innerHTML; } });
+      const b = document.getElementById('cont'); b.hidden = false; b.focus(); b.onclick = nextQ;
+      keyHandler = e => { if (e.key === 'Enter') { e.preventDefault(); nextQ(); } };
+    };
+    btns.forEach((b, i) => b.onclick = () => pick(i));
+    keyHandler = e => { const i = parseInt(e.key, 10) - 1; if (i >= 0 && i < opts.length) pick(i); };
+    return;
+  }
+
+  // typed: phase 2 shows the definition, phase 3 plays the word
+  const listen = phase === 3;
+  app.innerHTML = `${header()}<div class="card">${dots}
+    ${listen ? `<div class="center"><button class="bigspk" id="big" aria-label="Play audio">${ICON.spk}</button></div>` : `<h2 class="prompt${c.d.length > 40 ? ' long' : ''}" style="margin:0;font-weight:400">${esc(c.d)}</h2>`}
+    
+    <input type="text" class="answer" id="ans" autocomplete="off" autocapitalize="none" spellcheck="false" placeholder="${listen ? 'Type the word you hear' : 'Type the word'}" aria-label="Your answer">
+    <div class="msg" id="msg"></div>
+    <div class="row" style="justify-content:center"><button class="primary" id="go">Check</button><button class="link" id="dk">I don't know</button></div></div>`;
+  bindQuit();
+  const inp = document.getElementById('ans'); inp.focus();
+  if (listen) { document.getElementById('big').onclick = () => { speak(c.t); inp.focus(); }; setTimeout(() => speak(c.t), 250); }
+  const msg = (t, k) => { const m = document.getElementById('msg'); m.textContent = t; m.className = 'msg ' + k; };
+  let phaseState = 'ask';
+  const showWrong = note => {
+    phaseState = 'next'; settle(false); inp.classList.add('bad'); inp.readOnly = true;
+    document.getElementById('msg').innerHTML = `<div class="${note ? 'bad' : ''}" style="color:var(--red)">${note || ''}</div><div class="right-ans">✓ ${esc(c.t)}</div>`;
+    document.getElementById('dk').hidden = true; const g = document.getElementById('go'); g.textContent = 'Continue'; g.focus();
+  };
+  const submit = () => {
+    if (phaseState === 'next') return nextQ();
+    if (phaseState !== 'ask') return;
+    const r = check(inp.value, c.t);
+    if (r === 'right' || r === 'right-accent') {
+      phaseState = 'done'; settle(true); inp.classList.add('good'); inp.readOnly = true; keyHandler = null;
+      if (r === 'right-accent') msg(`Spelled: ${c.t}`, 'warn');
+      setTimeout(nextQ, r === 'right' ? 800 : 1800);
+    } else showWrong(r === 'close' ? 'Almost' : '');
+  };
+  document.getElementById('go').onclick = submit;
+  document.getElementById('dk').onclick = () => { if (phaseState === 'ask') showWrong(''); };
+  keyHandler = e => { if (e.key === 'Enter') { e.preventDefault(); submit(); } };
+}
+function renderDone() {
+  keyHandler = null;
+  app.innerHTML = `<h1>Every word learned</h1><p class="sub">All ${S.items.length} words passed all four phases in a row, with ${S.mistakes} mistake${S.mistakes === 1 ? '' : 's'} along the way.</p>
+    <div class="row"><button class="primary" id="again">Study again</button><button id="back">Back to list</button></div>`;
+  document.getElementById('again').onclick = () => startLearn(true);
+  document.getElementById('back').onclick = renderOverview;
+}
+
+// ---------- flashcards ----------
+function startFlash() {
+  let order = deck.cards.slice(), i = 0, flipped = false;
+  const draw = () => {
+    const c = order[i];
+    app.innerHTML = `<div class="top"><button class="link" id="back" style="padding:0">← Back</button><span>${i + 1} / ${order.length}</span><button class="link" id="shuf" style="padding:0">Shuffle</button></div>
+      <div class="card flash" id="fc"><div><small>${flipped ? 'Definition' : 'Word'}</small><span style="font-size:${(flipped ? c.d : c.t).length > 40 ? '1.3rem' : '2rem'}">${esc(flipped ? c.d : c.t)}</span></div></div>
+      <div class="row" style="justify-content:center;margin-top:14px"><button id="prev" ${i ? '' : 'disabled'}>←</button><button id="flip">Flip</button><button id="next" ${i < order.length - 1 ? '' : 'disabled'}>→</button></div>
+      <p class="sub" style="text-align:center;margin-top:12px;font-size:.9rem">Space flips · arrow keys move</p>`;
+    const go = d => { i = Math.max(0, Math.min(order.length - 1, i + d)); flipped = false; draw(); };
+    const flip = () => { flipped = !flipped; draw(); };
+    document.getElementById('fc').onclick = flip; document.getElementById('flip').onclick = flip;
+    document.getElementById('prev').onclick = () => go(-1); document.getElementById('next').onclick = () => go(1);
+    document.getElementById('back').onclick = renderOverview;
+    document.getElementById('shuf').onclick = () => { order = shuffle(order); i = 0; flipped = false; draw(); };
+    keyHandler = e => { if (e.key === ' ') { e.preventDefault(); flip(); } else if (e.key === 'ArrowRight') go(1); else if (e.key === 'ArrowLeft') go(-1); };
+  };
+  draw();
+}
+
+// ---------- quotes tab ----------
+const QUOTES = [
+ {
+  "book": 1,
+  "chapter": 1,
+  "text": "“BIG BROTHER IS WATCHING YOU.”",
+  "page": "",
+  "speaker": ""
+ },
+ {
+  "book": 1,
+  "chapter": 1,
+  "text": "“You had to live—did live, from habit that became instinct—in the assumption that every sound you made was overheard, and, except in darkness, every movement scrutinized”",
+  "page": "3",
+  "speaker": ""
+ },
+ {
+  "book": 1,
+  "chapter": 1,
+  "text": "“WAR IS PEACE.\nFREEDOM IS SLAVERY.\nIGNORANCE IS STRENGTH”",
+  "page": "4",
+  "speaker": ""
+ },
+ {
+  "book": 1,
+  "chapter": 2,
+  "text": "“We shall meet in a place with no darkness.”",
+  "page": "",
+  "speaker": ""
+ },
+ {
+  "book": 1,
+  "chapter": 2,
+  "text": "“The past was dead, the future was unimaginable”",
+  "page": "",
+  "speaker": ""
+ },
+ {
+  "book": 1,
+  "chapter": 3,
+  "text": "“Tragedy, he perceived, belonged to an ancient time.” … To a time when there were still privacy, love, and friendship, and when the members of a family stood by one another without needing to know the reason”",
+  "page": "30",
+  "speaker": ""
+ },
+ {
+  "book": 1,
+  "chapter": 3,
+  "text": "“Who controls the past controls the future: who controls the present controls the past”",
+  "page": "34",
+  "speaker": ""
+ },
+ {
+  "book": 1,
+  "chapter": 3,
+  "text": "“The past had not merely been altered, it had been actually destroyed… … For how could you establish even the most obvious fact when there existed no record outside your memory?”",
+  "page": "35",
+  "speaker": ""
+ },
+ {
+  "book": 1,
+  "chapter": 4,
+  "text": "“Everything faded away into a shadow-world in which, finally, even the date of the year had become uncertain”",
+  "page": "41",
+  "speaker": ""
+ },
+ {
+  "book": 1,
+  "chapter": 5,
+  "text": "“... the whole aim of Newspeak is to narrow the range of thought… Every year fewer and fewer words, and the range of consciousness always a little smaller… there will be no thought as we understand it now”",
+  "page": "52–53",
+  "speaker": ""
+ },
+ {
+  "book": 1,
+  "chapter": 5,
+  "text": "“Orthodoxy is unconsciousness”",
+  "page": "53",
+  "speaker": ""
+ },
+ {
+  "book": 1,
+  "chapter": 6,
+  "text": "“Your worst enemy was your own nervous system”",
+  "page": "63",
+  "speaker": ""
+ },
+ {
+  "book": 1,
+  "chapter": 7,
+  "text": "“Freedom is the freedom to say that two plus two make four. If that is granted, all else follows.”",
+  "page": "",
+  "speaker": ""
+ },
+ {
+  "book": 1,
+  "chapter": 8,
+  "text": "“And when memory failed and written records were falsified—when that happened, the claim of the Party to have improved the conditions of human life had got to be accepted, because there did not exist, and never again could exist, any standard against which it could be tested.”",
+  "page": "",
+  "speaker": ""
+ },
+ {
+  "book": 1,
+  "chapter": 8,
+  "text": "“The place where there is no darkness was the imagined future, which one would never see, but which, by foreknowledge, one could mystically share in.”",
+  "page": "",
+  "speaker": ""
+ },
+ {
+  "book": 2,
+  "chapter": 1,
+  "text": "“At the sight of the words I love you the desire to stay alive had welled up in him, and the taking of minor risks suddenly seemed stupid”",
+  "page": "109",
+  "speaker": ""
+ },
+ {
+  "book": 2,
+  "chapter": 2,
+  "text": "“Always yell with the crowd, that’s what I say. It’s the only way to be safe.”",
+  "page": "122",
+  "speaker": "Julia"
+ },
+ {
+  "book": 2,
+  "chapter": 3,
+  "text": "“There was a direct, intimate connection between chastity and political orthodoxy. For how could the fear, the hatred and the lunatic credulity which the Party needed in its members be kept at the right pitch, except by bottling down some powerful instinct and using it as a driving force? The sex impulse was dangerous to the Party, and the Party had turned it to account. They had played a similar trick with the instinct of parenthood. The family could not actually be abolished, and, indeed, people were encouraged to be fond of their children in almost the old-fashioned way. The children, on the other hand, were systematically turned against their parents and taught to spy on them and report their deviations. The family had become in effect an extension of the Thought Police. It was a device by means of which everyone could be surrounded night and day by informers who knew him intimately”",
+  "page": "133",
+  "speaker": ""
+ },
+ {
+  "book": 2,
+  "chapter": 3,
+  "text": "“She did not understand that there was no such thing as happiness, that the only victory lay in the far future, long after you were dead, that from the moment of declaring war on the Party it was better to think of yourself as a corpse.\n'We are the dead,' he said.”",
+  "page": "",
+  "speaker": ""
+ },
+ {
+  "book": 2,
+  "chapter": 4,
+  "text": "“The paperweight was the room he was in and the coral was Julia’s life and his own, fixed in a sort of eternity at the heart of the crystal”",
+  "page": "147",
+  "speaker": ""
+ },
+ {
+  "book": 2,
+  "chapter": 5,
+  "text": "“In reality there was no escape. Even the one plan that was practicable, suicide, they had no intention of carrying out. To hang on from day to day and from week to week, spinning out a present that had no future, seemed an unconquerable instinct, just as one's lungs will always draw the next breath so long as there is air available”",
+  "page": "152",
+  "speaker": ""
+ },
+ {
+  "book": 2,
+  "chapter": 6,
+  "text": "“What was happening was only the working-out of a process that had started years ago. The first step had been a secret, involuntary thought, the second had been the opening of the diary. He had moved from thoughts to words, and now from words to actions. The last step was something that would happen in the Ministry of Love. He had accepted it. The end was contained in the beginning. But it was frightening: or, more exactly, it was like a foretaste of death, like being a little less alive. Even while he was speaking to O'Brien, when the meaning of the words had sunk in, a chilly shuddering feeling had taken possession of his body. He had the sensation of stepping into the dampness of a grave, and it was not much better because he had always known that the grave was there and waiting for him”",
+  "page": "159",
+  "speaker": ""
+ }
+];
+document.querySelector('#nav a[data-tab="vocab"]').onclick = e => {
+  e.preventDefault();
+  if (lastDeckHash) location.hash = lastDeckHash; else { history.pushState(null, '', location.pathname + location.search); route(); }
+};
+function renderQuotes() {
+  keyHandler = null; document.title = '1984 quotes';
+  let book = 0, term = '';
+  app.innerHTML = `<h1>1984 quotes</h1><p class="sub" id="qcount"></p>
+    <div class="row"><input type="text" id="qs" placeholder="Search quotes…" aria-label="Search quotes" style="flex:1;min-width:160px">
+    <div class="seg" role="group" aria-label="Book"><button data-b="0" class="on">All</button><button data-b="1">Book 1</button><button data-b="2">Book 2</button></div></div>
+    <div id="qlist"></div>`;
+  const draw = () => {
+    const t = term.trim().toLowerCase();
+    const list = QUOTES.filter(q => (!book || q.book === book) && (!t || q.text.toLowerCase().includes(t) || q.speaker.toLowerCase().includes(t)));
+    document.getElementById('qcount').textContent = `${list.length} quote${list.length === 1 ? '' : 's'} from the class slideshow`;
+    let out = '', last = '';
+    list.forEach(q => {
+      const head = `Book ${q.book} · Chapter ${q.chapter}`;
+      if (head !== last) { out += `<div class="qh">${head}</div>`; last = head; }
+      const cite = [q.speaker, q.page && `p. ${q.page}`].filter(Boolean).join(' · ');
+      out += `<figure class="card q" style="margin:0 0 10px"><blockquote>${esc(q.text)}</blockquote>${cite ? `<cite>${esc(cite)}</cite>` : ''}</figure>`;
+    });
+    document.getElementById('qlist').innerHTML = out || '<p class="sub" style="margin-top:20px">No quotes match that search.</p>';
+  };
+  document.getElementById('qs').oninput = e => { term = e.target.value; draw(); };
+  app.querySelectorAll('.seg button').forEach(b => b.onclick = () => {
+    book = +b.dataset.b; app.querySelectorAll('.seg button').forEach(x => x.classList.toggle('on', x === b)); draw();
+  });
+  draw();
+}
+
+// ---------- FRQ practice tab ----------
+// Prompts and passages belong to the College Board, so this page only links to the official papers
+// and describes each question in a few words. Rubric wording below is a paraphrase.
+const CB = 'https://apcentral.collegeboard.org/media/pdf/';
+const TYPE = { S: 'Synthesis', R: 'Rhetorical analysis', A: 'Argument' };
+const PAPERS = [
+  { year: 2026, set: '', f: 'ap26-frq-english-language', g: 'ap26-sg-english-language', qs: [
+    ['S', 'The value, if any, of napping (six sources, including a graph and a photo)'],
+    ['R', 'Laura Amy Schlitz’s acceptance speech for the 2008 Newbery Medal'],
+    ['A', 'Mae Jemison’s claim about weighing other people’s opinions against your own view'] ] },
+  { year: 2025, set: 1, f: 'ap25-frq-english-language-set-1', g: 'ap25-sg-english-language-set-1', qs: [
+    ['S', 'What nations and space agencies should weigh when dealing with space debris'],
+    ['R', 'David Treuer’s introduction to Rez Life, his 2012 book on reservation life'],
+    ['A', 'Naomi Osaka’s claim about being present in each moment'] ] },
+  { year: 2025, set: 2, f: 'ap25-frq-english-language-set-2', g: 'ap25-sg-english-language-set-2', qs: [
+    ['S', 'The value, if any, of mapping software and GPS devices'],
+    ['R', 'Raquel Vasquez Gilliland’s 2023 opinion article about connecting with the outdoors'],
+    ['A', 'Amanda Gorman’s claim about optimism and pessimism'] ] },
+  { year: 2024, set: 1, f: 'ap24-frq-english-language-set-1', g: 'ap24-sg-english-language-set-1', qs: [
+    ['S', 'The value, if any, of laws that preserve historically important buildings'],
+    ['R', 'Reshma Saujani’s essay in the anthology American Like Me'],
+    ['A', 'J Wortham’s 2013 claim about selfies as a kind of visual diary'] ] },
+  { year: 2024, set: 2, f: 'ap24-frq-english-language-set-2', g: 'ap24-sg-english-language-set-2', qs: [
+    ['S', 'What cities should weigh most when regulating mobile food service (food trucks)'],
+    ['R', 'A passage by the actor Simu Liu'],
+    ['A', 'Jimmy Santiago Baca’s claim about valuing possessions over personal stories'] ] },
+  { year: 2023, set: 1, f: 'ap23-frq-english-language-set-1', g: 'ap23-sg-english-language-set-1', qs: [
+    ['S', 'Rewilding: restoring landscapes toward a more natural state'],
+    ['R', 'Michelle Obama’s January 2017 speech on school counselors and the Reach Higher Initiative'],
+    ['A', 'Maxine Hong Kingston’s claim about a community of voices versus individual voices'] ] },
+  { year: 2023, set: 2, f: 'ap23-frq-english-language-set-2', g: 'ap23-sg-english-language-set-2', qs: [
+    ['S', 'The value, if any, of vertical farms to the future of agriculture'],
+    ['R', 'Rita Dove’s 2016 commencement address'],
+    ['A', 'Carlos Curbelo’s claim about persuading people without scaring them'] ] }
+];
+const PROMPTS = PAPERS.flatMap(pp => pp.qs.map(([type, topic], i) => ({
+  id: `${pp.year}${pp.set ? '-s' + pp.set : ''}-q${i + 1}`, year: pp.year, set: pp.set, q: i + 1, type, topic,
+  paper: `${pp.year}${pp.set ? ` · Set ${pp.set}` : ''}`, pdf: CB + pp.f + '.pdf', sg: CB + pp.g + '.pdf'
+})));
+// suggested times from the exam directions: Q1 = 15 min reading + 40 min writing, Q2 and Q3 = 40 min writing
+const TIMES = { S: { read: 15, write: 40 }, R: { read: 0, write: 40 }, A: { read: 0, write: 40 } };
+
+const label = pr => `${pr.paper} · Question ${pr.q}`;
+const fmt = ms => { const t = Math.max(0, Math.ceil(ms / 1000)); return `${Math.floor(t / 60)}:${String(t % 60).padStart(2, '0')}`; };
+const countWords = t => (t.trim().match(/\S+/g) || []).length;
+let F = store.get('vp-frq', null);            // the session in progress (survives a reload)
+let frqView = { mode: 'picker', type: 'all', pid: null, reading: true };
+const saveF = () => store.set('vp-frq', F);
+
+function advance() {                          // move the saved session forward by the clock
+  const now = Date.now();
+  if (F.phase === 'read' && now >= F.readEnds) { F.phase = 'write'; F.writeEnds = F.readEnds + F.writeMs; }
+  if (F.phase === 'write' && now >= F.writeEnds) F.phase = 'review';
+  saveF();
+}
+function renderFrq() {
+  keyHandler = null; clearInterval(frqTick); document.title = 'FRQ Practice';
+  if (F && F.phase !== 'review') advance();
+  if (F) return F.phase === 'review' ? renderReview() : renderSession();
+  return frqView.mode === 'setup' ? renderSetup() : renderPicker();
+}
+
+function renderPicker() {
+  const list = PROMPTS.filter(x => frqView.type === 'all' || x.type === frqView.type);
+  let out = '', last = '';
+  list.forEach(x => {
+    if (x.paper !== last) { out += `<div class="qh">${x.paper}</div>`; last = x.paper; }
+    out += `<button class="pick" data-id="${x.id}"><div class="meta"><span class="badge">${TYPE[x.type]}</span><span>Question ${x.q} · ${TIMES[x.type].read ? '15 + 40' : '40'} min</span></div><div class="ttl">${esc(x.topic)}</div></button>`;
+  });
+  app.innerHTML = `<h1>FRQ practice</h1>
+    <p class="sub">Pick a past AP Language free-response question. You write for the suggested time, the page locks when the clock hits zero, and then you score yourself against the rubric.</p>
+    <div class="chips" role="group" aria-label="Question type">${[['all', 'All'], ['S', 'Synthesis'], ['R', 'Rhetorical analysis'], ['A', 'Argument']].map(([k, n]) => `<button data-t="${k}" class="${frqView.type === k ? 'on' : ''}">${n}</button>`).join('')}</div>
+    ${out}
+    <p class="sub" style="margin-top:20px;font-size:.9rem">Covers the 2023–2026 exams, the papers the College Board currently posts. Prompts and sources are the College Board’s; you read them in the official PDF.</p>`;
+  app.querySelectorAll('.chips button').forEach(b => b.onclick = () => { frqView.type = b.dataset.t; renderPicker(); });
+  app.querySelectorAll('.pick').forEach(b => b.onclick = () => { frqView = { ...frqView, mode: 'setup', pid: b.dataset.id, reading: true }; renderSetup(); });
+}
+
+function renderSetup() {
+  const pr = PROMPTS.find(x => x.id === frqView.pid), t = TIMES[pr.type];
+  app.innerHTML = `<button class="link" id="back" style="padding:0">← All prompts</button>
+    <h1 style="margin-top:10px">${esc(label(pr))}</h1>
+    <p class="sub"><span class="badge">${TYPE[pr.type]}</span> &nbsp;${esc(pr.topic)}</p>
+    <div class="card">
+      <b>Suggested time:</b> ${t.read ? `${t.read} minutes reading and planning, then ${t.write} minutes writing` : `${t.write} minutes writing`}
+      <ol class="steps" style="margin-top:12px">
+        <li><a href="${pr.pdf}" target="_blank" rel="noopener">Open the official question paper ↗</a> and find Question ${pr.q}.</li>
+        <li>Optional: paste the prompt below so it stays on screen while you write. It stays in this browser.</li>
+        <li>Press Start. The timer can’t be paused.</li>
+      </ol>
+      <textarea id="pp" placeholder="Paste the prompt here (optional)" style="min-height:120px"></textarea>
+      ${t.read ? `<label class="chk" style="margin-top:12px"><input type="checkbox" id="rd" ${frqView.reading ? 'checked' : ''}> Include the ${t.read}-minute reading period (writing is locked until it ends)</label>` : ''}
+      <div class="row" style="margin-top:16px"><button class="primary" id="go">Start timer</button></div>
+    </div>`;
+  document.getElementById('back').onclick = () => { frqView.mode = 'picker'; renderPicker(); };
+  document.getElementById('go').onclick = () => {
+    const now = Date.now(), reading = !!t.read && document.getElementById('rd').checked;
+    F = { pid: pr.id, phase: reading ? 'read' : 'write', prompt: document.getElementById('pp').value.trim(), text: '', scores: {},
+          readMs: t.read * 6e4, writeMs: t.write * 6e4, readEnds: reading ? now + t.read * 6e4 : 0, writeEnds: reading ? 0 : now + t.write * 6e4 };
+    saveF(); renderSession();
+  };
+}
+
+function renderSession() {
+  const pr = PROMPTS.find(x => x.id === F.pid), reading = F.phase === 'read', total = reading ? F.readMs : F.writeMs;
+  app.innerHTML = `<div class="top"><span>${esc(label(pr))} · ${TYPE[pr.type]}</span><button class="link" id="end" style="padding:0">${reading ? 'Skip reading period' : 'Finish early'}</button></div>
+    <div class="card">
+      <div class="frqhead"><div><div class="kind" style="text-align:left">${reading ? 'Reading period' : 'Writing time left'}</div><div class="clock" id="clock" role="timer" aria-live="off"></div></div><div class="wc" id="wc"></div></div>
+      <div class="bar"><i id="pb" style="width:0"></i></div>
+      <details class="pbox" ${reading || F.prompt ? 'open' : ''}><summary>Prompt</summary>
+        <div class="sub" style="margin:4px 0 8px">${esc(pr.topic)}</div>
+        ${F.prompt ? `<div class="pasted">${esc(F.prompt)}</div>` : ''}
+        <a href="${pr.pdf}" target="_blank" rel="noopener">Open the official question paper ↗</a></details>
+      <textarea id="essay" class="essay" spellcheck="false" autocomplete="off" ${reading ? 'disabled' : ''} placeholder="${reading ? 'Writing opens when the reading period ends.' : 'Start writing…'}" aria-label="Your essay">${esc(F.text)}</textarea>
+    </div>`;
+  const essay = document.getElementById('essay'), wc = document.getElementById('wc');
+  const showWc = () => wc.textContent = `${countWords(F.text)} words`; showWc();
+  essay.oninput = () => { F.text = essay.value; saveF(); showWc(); };
+  if (!reading) essay.focus();
+  document.getElementById('end').onclick = () => {
+    if (reading) { F.phase = 'write'; F.writeEnds = Date.now() + F.writeMs; saveF(); renderSession(); }
+    else if (confirm('Finish now? You won’t be able to keep writing.')) { F.phase = 'review'; saveF(); renderFrq(); }
+  };
+  const clock = document.getElementById('clock'), pb = document.getElementById('pb');
+  const update = () => {
+    const left = (reading ? F.readEnds : F.writeEnds) - Date.now();
+    if (left <= 0) return renderFrq();      // advance() moves to the next phase, or to the rubric
+    clock.textContent = fmt(left); clock.classList.toggle('low', !reading && left <= 5 * 6e4);
+    pb.style.width = (1 - left / total) * 100 + '%';
+  };
+  update(); frqTick = setInterval(update, 250);
+}
+
+function rubricRows(type) {
+  const ev = { S: 'at least three of the sources', R: 'the passage', A: 'your own examples and reasoning' }[type];
+  const A = {
+    S: ['No defensible position. The thesis restates the prompt, only summarizes the issue, or never answers the question.', 'A clear, defensible position on the issue. It can be anywhere in the essay and can take a couple of sentences.'],
+    R: ['No thesis about the writer’s rhetorical choices. It restates the prompt, summarizes the passage, or doesn’t address how the writer builds the argument.', 'A defensible thesis that analyzes the writer’s rhetorical choices and what they accomplish.'],
+    A: ['No defensible position. The thesis restates the prompt, only summarizes the issue, or doesn’t say how far the claim holds.', 'A defensible position on the extent to which the claim is valid (agree, disagree, or qualify it).']
+  }[type];
+  const B = [
+    { S: 'Restates the thesis, repeats information already given, or uses fewer than two sources.', R: 'Restates the thesis or repeats the passage, with no relevant evidence.', A: 'Mostly opinion, or examples that don’t connect to the claim.' }[type],
+    { S: 'Uses at least two sources but only summarizes them. Never explains how they support the argument.', R: 'Points to details in the passage but only describes them. Never explains how they support the analysis.', A: 'Gives an example or two but only describes them. Never explains how they support the argument.' }[type],
+    { S: 'Draws on at least three sources and explains how some of the evidence relates to the argument, but there is no clear line of reasoning (or it is flawed).', R: 'Cites several details and explains some, but the analysis doesn’t build into a clear line of reasoning (or it is flawed).', A: 'Gives several examples and explains some, but the argument doesn’t build into a clear line of reasoning (or it is flawed).' }[type],
+    `Specific evidence from ${ev} backs every claim in a clear line of reasoning, but the explanation of how it supports that reasoning is uneven.`,
+    `Specific evidence from ${ev} backs every claim in a clear line of reasoning, and the essay consistently explains how that evidence supports it. Errors never get in the way of meaning.`
+  ];
+  const C = ['Sound, but no more than a straightforward response.', 'Shows sophistication as part of the argument itself: it explores tensions or nuance, places the issue in a broader context, weighs alternative views or their limits, or uses a distinctive style that strengthens the argument. A single phrase or passing mention doesn’t count.'];
+  return [
+    { key: 'a', title: 'Row A · Thesis', opts: A },
+    { key: 'b', title: 'Row B · Evidence and commentary', opts: B },
+    { key: 'c', title: 'Row C · Sophistication', opts: C }
+  ];
+}
+
+function renderReview() {
+  keyHandler = null; clearInterval(frqTick);
+  const pr = PROMPTS.find(x => x.id === F.pid), rows = rubricRows(pr.type);
+  app.innerHTML = `<h1>Time’s up</h1>
+    <p class="sub">${esc(label(pr))} · ${TYPE[pr.type]} · ${countWords(F.text)} words. Writing is locked. Score your essay below.</p>
+    <h2>Your essay</h2>
+    <div class="card essaybox">${F.text.trim() ? esc(F.text) : '<em style="color:var(--mute)">You didn’t write anything.</em>'}</div>
+    <div class="row" style="margin-top:10px"><button id="copy">Copy essay</button></div>
+    <h2 style="margin-top:28px">Self-evaluation rubric <span class="sub" style="font-weight:400;font-size:.9rem">· 6 points, same three rows for every essay</span></h2>
+    <p class="sub" style="margin-bottom:0">Score only what is on the page, and when you’re between two levels, choose the lower one. This is a paraphrase; the College Board’s <a href="${pr.sg}" target="_blank" rel="noopener">official scoring guidelines and sample essays ↗</a> are the authority.</p>
+    ${rows.map(r => `<div class="rowh"><h3>${r.title}</h3><span class="wc">${r.opts.length === 2 ? '0–1' : '0–4'} points</span></div>
+      ${r.opts.map((o, v) => `<label class="rr"><input type="radio" name="${r.key}" value="${v}" ${F.scores[r.key] === v ? 'checked' : ''}><b>${v}</b><span>${esc(o)}</span></label>`).join('')}`).join('')}
+    <div class="rowh" style="margin-top:22px"><h3>Your score</h3><span class="total" id="total"></span></div>
+    <div class="row" style="margin-top:8px"><button class="primary" id="again">Try this prompt again</button><button id="done">Back to prompts</button></div>`;
+  const total = () => {
+    const sc = F.scores, got = ['a', 'b', 'c'].filter(k => sc[k] !== undefined);
+    document.getElementById('total').textContent = got.length === 3 ? `${sc.a + sc.b + sc.c} / 6` : `${got.reduce((n, k) => n + sc[k], 0)} so far (${3 - got.length} row${got.length === 2 ? '' : 's'} left)`;
+  };
+  total();
+  app.querySelectorAll('.rr input').forEach(i => i.onchange = () => { F.scores[i.name] = +i.value; saveF(); total(); });
+  document.getElementById('copy').onclick = async e => { try { await navigator.clipboard.writeText(F.text); e.target.textContent = 'Copied!'; setTimeout(() => e.target.textContent = 'Copy essay', 1500); } catch { e.target.textContent = 'Copy failed'; } };
+  const leave = mode => { frqView = { ...frqView, mode, pid: pr.id, reading: true }; F = null; saveF(); renderFrq(); };
+  document.getElementById('again').onclick = () => leave('setup');
+  document.getElementById('done').onclick = () => leave('picker');
+}
+
+// ---------- built-in lists + library ----------
+const LISTS = [
+ {
+  "title": "1984 vocabulary · List 1 (pp. 7–100)",
+  "cards": [
+   {
+    "t": "Decisive",
+    "d": "displaying little or no hesitation"
+   },
+   {
+    "t": "Predicament",
+    "d": "unpleasantly difficult situation"
+   },
+   {
+    "t": "Bigoted",
+    "d": "intolerant of beliefs different from one’s own"
+   },
+   {
+    "t": "Orthodoxy",
+    "d": "relating to an approved and conventional ideology"
+   },
+   {
+    "t": "Specious",
+    "d": "pleasing to the eye, but lacking real merit"
+   },
+   {
+    "t": "Equivocal",
+    "d": "of uncertain significance"
+   },
+   {
+    "t": "Mutability",
+    "d": "subject to change"
+   },
+   {
+    "t": "Zealot",
+    "d": "a person who shows intense fervor for a cause"
+   },
+   {
+    "t": "Rectify",
+    "d": "to set right or remedy"
+   },
+   {
+    "t": "Palimpsest",
+    "d": "a piece of writing material on which the original writing has been effaced to make room for later writing"
+   },
+   {
+    "t": "Proletariat",
+    "d": "the lowest or poorest class of people"
+   },
+   {
+    "t": "Strident",
+    "d": "having a harsh or grating sound"
+   },
+   {
+    "t": "Edified",
+    "d": "having been instructed morally"
+   },
+   {
+    "t": "Fornication",
+    "d": "voluntary sex between two unmarried persons"
+   },
+   {
+    "t": "Debauchery",
+    "d": "excessive indulgence in sensual pleasures"
+   },
+   {
+    "t": "Sinecure",
+    "d": "a job that requires little to no work"
+   },
+   {
+    "t": "Stratum",
+    "d": "a demarcated layer or level"
+   },
+   {
+    "t": "Anodyne",
+    "d": "a medicine that relieves pain"
+   },
+   {
+    "t": "Proprietor",
+    "d": "the owner of a business establishment"
+   },
+   {
+    "t": "Slatternly",
+    "d": "slovenly and untidy"
+   },
+   {
+    "t": "Reconnoitering",
+    "d": "to examine or survey a region to obtain information"
+   }
+  ]
+ },
+ {
+  "title": "1984 vocabulary · List 2 (pp. 108–209)",
+  "cards": [
+   {
+    "t": "Fatuous",
+    "d": "foolish and silly"
+   },
+   {
+    "t": "Shirk",
+    "d": "to evade work or duty"
+   },
+   {
+    "t": "Contrived",
+    "d": "obviously planned or forced"
+   },
+   {
+    "t": "Incredulity",
+    "d": "inability or unwillingness to believe"
+   },
+   {
+    "t": "Infallible",
+    "d": "exempt from error, absolutely trustworthy"
+   },
+   {
+    "t": "Privation",
+    "d": "a lack of the usual comforts of life"
+   },
+   {
+    "t": "Driveling",
+    "d": "speaking childishly or idiotically"
+   },
+   {
+    "t": "Compulsion",
+    "d": "the act of force or coercion"
+   },
+   {
+    "t": "Deprecating",
+    "d": "to belittle, express disapproval of"
+   },
+   {
+    "t": "Impudent",
+    "d": "a type of shameless boldness"
+   },
+   {
+    "t": "Impregnable",
+    "d": "not able to be overcome"
+   },
+   {
+    "t": "Demur",
+    "d": "hesitation"
+   },
+   {
+    "t": "Catechism",
+    "d": "instruction in the practices of the church"
+   },
+   {
+    "t": "Harangue",
+    "d": "a long and intense verbal attack"
+   },
+   {
+    "t": "Oligarchy",
+    "d": "a form of government in which power is held by a few or dominate class"
+   },
+   {
+    "t": "Hierarchical",
+    "d": "a system in which persons are ranked one above the other"
+   },
+   {
+    "t": "Socialism",
+    "d": "a system in which control of the means of production, capital, and land is held by the community"
+   },
+   {
+    "t": "Totalitarian",
+    "d": "a centralized government that does not"
+   },
+   {
+    "t": "Stratified",
+    "d": "arranged in graded status levels"
+   }
+  ]
+ },
+ {
+  "title": "1984 vocabulary · List 3 (pp. 227–290)",
+  "cards": [
+   {
+    "t": "Copious",
+    "d": "large in quantity"
+   },
+   {
+    "t": "Sanctimonious",
+    "d": "a hypocritical show of religious devotion"
+   },
+   {
+    "t": "Sententious",
+    "d": "given to excessive moralizing; self-righteous"
+   },
+   {
+    "t": "Emaciation",
+    "d": "abnormal thinness caused by lack of nutrition"
+   },
+   {
+    "t": "Prevaricate",
+    "d": "to speak falsely or misleadingly"
+   },
+   {
+    "t": "Cower",
+    "d": "to crouch in fear or shame"
+   },
+   {
+    "t": "Wantonness",
+    "d": "sexual lawlessness"
+   },
+   {
+    "t": "Penitence",
+    "d": "regret for one’s wrongdoing"
+   },
+   {
+    "t": "Solipsism",
+    "d": "the theory that only the self exists"
+   },
+   {
+    "t": "Hedonistic",
+    "d": "done in the pursuit of pleasure of self-gratification"
+   },
+   {
+    "t": "Despotism",
+    "d": "rule of one with absolute authority"
+   },
+   {
+    "t": "Vitriol",
+    "d": "a highly corrosive acid"
+   },
+   {
+    "t": "Malignant",
+    "d": "disposed to causing harm or suffering"
+   },
+   {
+    "t": "Torpid",
+    "d": "inactive or sluggish"
+   },
+   {
+    "t": "Capitulated",
+    "d": "to surrender unconditionally"
+   },
+   {
+    "t": "Inviolate",
+    "d": "unbroken"
+   },
+   {
+    "t": "Premonitory",
+    "d": "serving to warn beforehand"
+   },
+   {
+    "t": "Didactically",
+    "d": "intended for instruction"
+   },
+   {
+    "t": "Cauterized",
+    "d": "to burn with a hot iron for curative purposes"
+   }
+  ]
+ }
+];
+function renderLibrary() {
+  keyHandler = null; deck = null;
+  app.innerHTML = `<h1>Vocab lists</h1>
+    <p class="sub">Open a ready-made list or build your own. Every list lives in its own link, so you can share it.</p>
+    <div class="qh" style="margin-top:0">Ready to use</div>
+    ${LISTS.map((l, i) => `<button class="pick" data-i="${i}"><div class="meta"><span class="badge">${l.cards.length} words</span></div><div class="ttl">${esc(l.title)}</div><div class="meta" style="margin:4px 0 0">${esc(l.cards.slice(0, 4).map(c => c.t).join(', '))}…</div></button>`).join('')}
+    <div class="qh">Your own</div>
+    <button class="primary" id="create">+ Create a list</button>`;
+  app.querySelectorAll('.pick').forEach(b => b.onclick = () => goToDeck(LISTS[+b.dataset.i]));
+  document.getElementById('create').onclick = () => renderEditor({ title: '', cards: [{ t: '', d: '' }, { t: '', d: '' }, { t: '', d: '' }] });
+}
+
+route();   // start last, once every const above has been initialised
+</script>
+</body>
+</html>
