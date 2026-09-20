@@ -644,7 +644,12 @@ document.querySelectorAll('#nav a').forEach(a => a.onclick = e => {
   e.preventDefault();
   const tab = a.dataset.tab;
   if (tab === 'vocab') return goHome();                   // the lists library
-  if (tab === 'frq') frqView.mode = 'picker';             // prompt picker (a running session still takes priority)
+  if (tab === 'frq') {
+    frqView.mode = 'picker';
+    // Only a timed session in progress keeps you on its page. A finished essay whose results you have
+    // already seen is dropped, so the tab goes to the FRQ home page; results you haven't seen yet show once.
+    if (F) { if (F.phase !== 'review') advance(); if (F.phase === 'review' && F.seen) { F = null; saveF(); } }
+  }
   if (location.hash.slice(1) === tab) route(); else location.hash = tab;
 });
 function renderQuotes() {
@@ -833,6 +838,7 @@ function rubricRows(type) {
 
 function renderReview() {
   keyHandler = null; clearInterval(frqTick);
+  F.seen = true; saveF();                       // once shown, clicking the FRQ tab again goes home
   const pr = PROMPTS.find(x => x.id === F.pid), rows = rubricRows(pr.type);
   app.innerHTML = `<h1>Time’s up</h1>
     <p class="sub">${esc(label(pr))} · ${TYPE[pr.type]} · ${countWords(F.text)} words. Writing is locked. Score your essay below.</p>
