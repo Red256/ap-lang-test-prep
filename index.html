@@ -28,6 +28,8 @@ button.primary{background:var(--btn);color:var(--btn-ink);border-color:var(--btn
 button.link{border:0;background:none;color:var(--blue);padding:4px 8px;text-decoration:underline}
 input[type=text],textarea{font:inherit;width:100%;padding:9px 12px;border:2px solid var(--orange);border-radius:8px;background:#fff;color:var(--strong)}
 input:focus,textarea:focus,button:focus-visible{outline:2px solid var(--blue);outline-offset:1px}
+/* a selected text box swaps its yellow border for the blue ring (drawn right on top of the border, so nothing doubles up) */
+input[type=text]:not(.good):not(.bad):focus,textarea:focus{border-color:transparent;outline-offset:-2px}
 textarea{min-height:110px;resize:vertical}
 .rows{display:grid;grid-template-columns:1fr 1fr auto;gap:8px;align-items:center}
 .rows h2{margin:22px 0 2px}
@@ -51,6 +53,8 @@ label.chk{display:flex;gap:8px;align-items:center;color:var(--mute);font-size:.9
 .prompt{font-size:2rem;font-weight:400;color:var(--ink);line-height:1.2;margin:0;word-break:break-word}
 .spk{flex:none;width:28px;height:28px;padding:0;border-radius:50%;background:var(--btn);border:0;color:var(--btn-ink);display:grid;place-items:center}
 .spk svg{width:14px;height:14px}
+.flash .spk{position:absolute;top:12px;right:12px;width:38px;height:38px}
+.flash .spk svg{width:18px;height:18px}
 .pos{display:flex;align-items:center;gap:8px;margin:12px 0 16px;font-size:.78rem;color:var(--mute);font-weight:600}
 .gi{width:22px;height:22px;border-radius:50%;display:grid;place-items:center}
 .gi svg{width:13px;height:13px}
@@ -69,7 +73,7 @@ label.chk{display:flex;gap:8px;align-items:center;color:var(--mute);font-size:.9
 .bigspk svg{width:32px;height:32px}
 .right-ans{margin-top:10px;font-size:.95rem;color:var(--green)}
 .center{text-align:center}
-.flash{min-height:260px;display:flex;align-items:center;justify-content:center;text-align:center;font-size:2rem;cursor:pointer;user-select:none;padding:24px}
+.flash{position:relative;min-height:260px;display:flex;align-items:center;justify-content:center;text-align:center;font-size:2rem;cursor:pointer;user-select:none;padding:24px}
 .flash small{display:block;font-size:.75rem;color:var(--mute);margin-bottom:8px;text-transform:uppercase;letter-spacing:.06em}
 h2.prompt.long{font-size:1.2rem;line-height:1.4}
 .prompt-row{margin-bottom:16px}
@@ -113,7 +117,7 @@ button.pick .ttl{color:var(--strong)}
 .clock.low{color:var(--red)}
 .frqhead{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:8px;gap:12px}
 .wc{color:var(--mute);font-size:.9rem}
-.essay{width:100%;min-height:360px;resize:vertical;font:inherit;line-height:1.6;padding:12px 14px;border:2px solid var(--orange);border-radius:8px;background:#fff;color:var(--strong)}
+.essay{width:100%;min-height:360px;resize:vertical;overflow-y:hidden;font:inherit;line-height:1.6;padding:12px 14px;border:2px solid var(--orange);border-radius:8px;background:#fff;color:var(--strong)}
 .essay:disabled{background:var(--soft);color:var(--mute)}
 details.pbox{margin:0 0 12px}
 details.pbox summary{cursor:pointer;color:var(--blue);font-weight:600;padding:4px 0}
@@ -460,13 +464,16 @@ function startFlash() {
   let order = deck.cards.slice(), i = 0, flipped = false;
   const draw = () => {
     const c = order[i];
+    speechCancel();
     app.innerHTML = `${shell('flash')}<div class="flashwrap"><div class="top"><span>${i + 1} / ${order.length}</span><button class="link" id="shuf" style="padding:0">Shuffle</button></div>
-      <div class="card flash" id="fc"><div><small>${flipped ? 'Definition' : 'Word'}</small><span style="font-size:${(flipped ? c.d : c.t).length > 40 ? '1.3rem' : '2rem'}">${esc(flipped ? c.d : c.t)}</span></div></div>
+      <div class="card flash" id="fc">${canSpeak() && !flipped ? `<button class="spk" id="fspk" aria-label="Play pronunciation">${ICON.spk}</button>` : ''}<div><small>${flipped ? 'Definition' : 'Word'}</small><span style="font-size:${(flipped ? c.d : c.t).length > 40 ? '1.3rem' : '2rem'}">${esc(flipped ? c.d : c.t)}</span></div></div>
       <div class="row" style="justify-content:center;margin-top:14px"><button id="prev" ${i ? '' : 'disabled'}>←</button><button id="flip">Flip</button><button id="next" ${i < order.length - 1 ? '' : 'disabled'}>→</button></div>
       <p class="sub" style="text-align:center;margin-top:12px;font-size:.9rem">Space flips · arrow keys move</p></div>`;
     const go = d => { i = Math.max(0, Math.min(order.length - 1, i + d)); flipped = false; draw(); };
     const flip = () => { flipped = !flipped; draw(); };
     document.getElementById('fc').onclick = flip; document.getElementById('flip').onclick = flip;
+    const sp = document.getElementById('fspk');   // only on the word side; says the word and doesn't flip the card
+    if (sp) sp.onclick = e => { e.stopPropagation(); speak(c.t); };
     document.getElementById('prev').onclick = () => go(-1); document.getElementById('next').onclick = () => go(1);
     bindListNav();
     document.getElementById('shuf').onclick = () => { order = shuffle(order); i = 0; flipped = false; draw(); };
@@ -753,7 +760,7 @@ function renderSetup() {
       <b>Suggested time:</b> ${t.read ? `${t.read} minutes reading and planning, then ${t.write} minutes writing` : `${t.write} minutes writing`}
       <ol class="steps" style="margin-top:12px">
         <li><a href="${pr.pdf}" target="_blank" rel="noopener">Open the official question paper ↗</a> and find Question ${pr.q}.</li>
-        <li>Optional: paste the prompt below so it stays on screen while you write. It stays in this browser.</li>
+        <li>Optional: paste the prompt below so it stays on screen while you write.</li>
         <li>Press Start. The timer can’t be paused.</li>
       </ol>
       <textarea id="pp" placeholder="Paste the prompt here (optional)" style="min-height:120px"></textarea>
@@ -777,13 +784,16 @@ function renderSession() {
       <div class="bar"><i id="pb" style="width:0"></i></div>
       <details class="pbox" ${reading || F.prompt ? 'open' : ''}><summary>Prompt</summary>
         <div class="sub" style="margin:4px 0 8px">${esc(pr.topic)}</div>
-        ${F.prompt ? `<div class="pasted">${esc(F.prompt)}</div>` : ''}
-        <a href="${pr.pdf}" target="_blank" rel="noopener">Open the official question paper ↗</a></details>
+        <div><a href="${pr.pdf}" target="_blank" rel="noopener">Open the official question paper ↗</a></div>
+        ${F.prompt ? `<div class="pasted">${esc(F.prompt)}</div>` : ''}</details>
       <textarea id="essay" class="essay" spellcheck="false" autocomplete="off" ${reading ? 'disabled' : ''} placeholder="${reading ? 'Writing opens when the reading period ends.' : 'Start writing…'}" aria-label="Your essay">${esc(F.text)}</textarea>
     </div>`;
   const essay = document.getElementById('essay'), wc = document.getElementById('wc');
   const showWc = () => wc.textContent = `${countWords(F.text)} words`; showWc();
-  essay.oninput = () => { F.text = essay.value; saveF(); showWc(); };
+  // the box starts at 360px and grows as the essay fills it, so it never needs an inner scrollbar
+  const grow = () => { if (essay.scrollHeight > essay.clientHeight) essay.style.height = essay.scrollHeight + (essay.offsetHeight - essay.clientHeight) + 'px'; };
+  essay.oninput = () => { F.text = essay.value; saveF(); showWc(); grow(); };
+  grow();
   if (!reading) essay.focus();
   document.getElementById('end').onclick = () => {
     if (reading) { F.phase = 'write'; F.writeEnds = Date.now() + F.writeMs; saveF(); renderSession(); }
